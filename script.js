@@ -1,37 +1,39 @@
 const sounds=[
- {g:'A',word:'ami',emoji:'🧒',voice:'a',type:'vowel'},
- {g:'M',word:'moto',emoji:'🏍️',voice:'me',type:'consonant'},
- {g:'I',word:'image',emoji:'🖼️',voice:'i',type:'vowel'},
- {g:'P',word:'papi',emoji:'👴',voice:'pe',type:'consonant'},
- {g:'O',word:'olive',emoji:'🫒',voice:'o',type:'vowel'},
- {g:'V',word:'vélo',emoji:'🚲',voice:'ve',type:'consonant'},
- {g:'É',word:'épi',emoji:'🌾',voice:'é',type:'vowel'},
- {g:'L',word:'loto',emoji:'🎱',voice:'le',type:'consonant'},
- {g:'F',word:'fusée',emoji:'🚀',voice:'fe',type:'consonant'},
- {g:'R',word:'rat',emoji:'🐀',voice:'re',type:'consonant'}
+ {g:'A',word:'avion',emoji:'✈️',type:'vowel'}, {g:'M',word:'maman',emoji:'👩',type:'consonant'}, {g:'I',word:'image',emoji:'🖼️',type:'vowel'}, {g:'P',word:'papa',emoji:'👨',type:'consonant'}, {g:'O',word:'olive',emoji:'🫒',type:'vowel'},
+ {g:'L',word:'lune',emoji:'🌙',type:'consonant'}, {g:'V',word:'vélo',emoji:'🚲',type:'consonant'}, {g:'É',word:'épi',emoji:'🌾',type:'vowel'}, {g:'F',word:'fusée',emoji:'🚀',type:'consonant'}, {g:'R',word:'rat',emoji:'🐀',type:'consonant'}
 ];
 const words=[
- {word:'ami',emoji:'🧒',parts:['a','m','i']},
- {word:'papi',emoji:'👴',parts:['p','a','p','i']},
- {word:'moto',emoji:'🏍️',parts:['m','o','t','o']},
- {word:'ému',emoji:'🥹',parts:['é','m','u']},
- {word:'ici',emoji:'👇',parts:['i','c','i']}
+ {word:'ami',emoji:'🧒',need:['A','M','I']},
+ {word:'papi',emoji:'👴',need:['P','A','I']},
+ {word:'papa',emoji:'👨',need:['P','A']},
+ {word:'mami',emoji:'👵',need:['M','A','I']},
+ {word:'poli',emoji:'🙂',need:['P','O','L','I']},
+ {word:'vélo',emoji:'🚲',need:['V','É','L','O']}
 ];
-const vowels=new Set(['a','e','i','o','u','y','é','è','ê','à','â','ô','î','ï','ù','û']);
-const state=JSON.parse(localStorage.getItem('phonikaFrProgress')||'{"known":{},"review":{},"soundKnown":{},"index":0}');
-function save(){localStorage.setItem('phonikaFrProgress',JSON.stringify(state));}
-function speak(text){if(!('speechSynthesis'in window))return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.72; const voices=speechSynthesis.getVoices();const fr=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('fr'));if(fr)u.voice=fr;speechSynthesis.speak(u);}
-function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='sounds')renderSounds();if(id==='reading')renderWord();if(id==='parent')renderStats();}
-document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));document.getElementById('homeBtn').onclick=()=>show('home');document.getElementById('parentBtn').onclick=()=>show('parent');
-function activeSounds(){let mastered=sounds.filter(s=>state.soundKnown[s.g]);let not=sounds.filter(s=>!state.soundKnown[s.g]);return [...mastered.slice(-4),...not].slice(0,5);}
-function renderSounds(){const box=document.getElementById('soundCards');box.innerHTML='';activeSounds().forEach(s=>{const card=document.createElement('div');card.className='sound-card';card.innerHTML=`<button class="letter-btn ${s.type}" aria-label="Son ${s.g}">${s.g}</button><button class="image-btn" aria-label="${s.word}">${s.emoji}<small>${s.word}</small></button>`;card.querySelector('.letter-btn').onclick=()=>{speak(s.voice);state.soundKnown[s.g]=(state.soundKnown[s.g]||0)+1>=3;save();};card.querySelector('.image-btn').onclick=()=>speak(s.word);box.appendChild(card);});}
-function coloredWord(w){return [...w].map(c=>`<span class="${vowels.has(c.toLowerCase())?'vowel':'consonant'}">${c.toUpperCase()}</span>`).join('');}
-function current(){return words[state.index%words.length];}
-function renderWord(){const w=current();document.getElementById('word').innerHTML=coloredWord(w.word);document.getElementById('pictureEmoji').textContent=w.emoji;document.getElementById('helpLine').textContent='';let done=Object.keys(state.known).length;document.getElementById('progressBar').style.width=`${Math.min(100,done/words.length*100)}%`;}
-document.getElementById('pictureBtn').onclick=()=>speak(current().word);
-document.getElementById('helpBtn').onclick=()=>{const w=current();const line=document.getElementById('helpLine');line.textContent='';let i=0;const timer=setInterval(()=>{if(i>=w.parts.length){clearInterval(timer);setTimeout(()=>speak(w.word),350);return;}line.textContent+=(i?'  ':'')+w.parts[i].toUpperCase();speak(w.parts[i]);i++;},850);};
-document.getElementById('knownBtn').onclick=()=>{state.known[current().word]=(state.known[current().word]||0)+1;delete state.review[current().word];save();next();};document.getElementById('againBtn').onclick=()=>{state.review[current().word]=(state.review[current().word]||0)+1;save();next();};document.getElementById('nextBtn').onclick=next;
-function next(){let candidates=words.map((w,i)=>({w,i,score:(state.review[w.word]||0)*4-(state.known[w.word]||0)*2})).filter(x=>x.i!==state.index%words.length);candidates.sort((a,b)=>b.score-a.score||Math.random()-.5);state.index=candidates.length?candidates[0].i:(state.index+1)%words.length;save();renderWord();}
-function renderStats(){const known=Object.keys(state.known).length;const review=Object.keys(state.review).length;const masteredSounds=Object.keys(state.soundKnown).filter(k=>state.soundKnown[k]).length;document.getElementById('parentStats').innerHTML=`<strong>Niveau 1</strong><br>Sons maîtrisés : ${masteredSounds} / ${sounds.length}<br>Mots déjà lus : ${known} / ${words.length}<br>Mots à revoir : ${review}<br><br><small>Les mots difficiles reviennent plus souvent.</small>`;}
-document.getElementById('resetBtn').onclick=()=>{if(confirm('Réinitialiser toute la progression ?')){localStorage.removeItem('phonikaFrProgress');location.reload();}};
-renderSounds();
+const KEY='phonika-fr-v2';
+let state=JSON.parse(localStorage.getItem(KEY)||'{"sounds":{},"words":{},"soundQueue":[],"wordQueue":[]}');
+const $=id=>document.getElementById(id);const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
+function sp(g){if(!state.sounds[g])state.sounds[g]={self:0,mastered:false};return state.sounds[g]}
+function wp(w){if(!state.words[w])state.words[w]={self:0,mastered:false};return state.words[w]}
+function soundQueue(){let q=state.soundQueue.filter(g=>sounds.some(s=>s.g===g)&&!sp(g).mastered);for(const s of sounds){if(q.length>=5)break;if(!sp(s.g).mastered&&!q.includes(s.g))q.push(s.g)}state.soundQueue=q.slice(0,5);save();return state.soundQueue}
+function availableWords(){return words.filter(w=>w.need.every(g=>sp(g).mastered))}
+function wordQueue(){let available=availableWords(),q=state.wordQueue.filter(w=>available.some(x=>x.word===w)&&!wp(w).mastered);for(const w of available){if(q.length>=5)break;if(!wp(w.word).mastered&&!q.includes(w.word))q.push(w.word)}state.wordQueue=q.slice(0,5);save();return state.wordQueue}
+let section='words',wi=0,si=0,usedHint=false;
+function colorText(text){return [...text].map(c=>`<span class="${'AEIOUYÉÈÊÀÂÔÎÏÙÛ'.includes(c.toUpperCase())?'vowel':'consonant'}">${c.toUpperCase()}</span>`).join('')}
+function showSection(which){section=which;$('readingView').hidden=which!=='words';$('soundsView').hidden=which!=='sounds';$('readingTab').classList.toggle('on',which==='words');$('soundsTab').classList.toggle('on',which==='sounds');which==='words'?showWord():showSound()}
+function currentWord(){const q=wordQueue();return words.find(w=>w.word===q[wi%Math.max(q.length,1)])}
+function showWord(){const w=currentWord();usedHint=false;$('reward').textContent='';$('picture').hidden=true;$('pictureBtn').textContent='Voir l’image';$('readOk').disabled=false;$('readOk').classList.remove('done');$('readOk').textContent='✓ Je l’ai lu seul';if(!w){$('word').textContent='';$('readOk').hidden=true;$('helpBtn').hidden=true;$('pictureBtn').hidden=true;$('nextBtn').hidden=true;$('reward').textContent='Découvrons encore quelques sons';return}$('readOk').hidden=$('helpBtn').hidden=$('pictureBtn').hidden=$('nextBtn').hidden=false;$('word').innerHTML=colorText(w.word);$('picture').textContent=w.emoji}
+function currentSound(){const q=soundQueue();return sounds.find(s=>s.g===q[si%Math.max(q.length,1)])}
+function showSound(){const s=currentSound();if(!s){$('soundCard').textContent='Bravo !';return}$('soundCard').innerHTML=`<span class="${s.type}">${s.g}</span>`;$('soundPicture').textContent=s.emoji;$('soundPicture').hidden=true;$('soundPictureBtn').textContent="Voir l’image";$('soundKnown').disabled=false;$('soundKnown').classList.remove('done');$('soundKnown').textContent='✓ Je connais ce son'}
+$('readingTab').onclick=()=>showSection('words');$('soundsTab').onclick=()=>showSection('sounds');
+$('pictureBtn').onclick=()=>{if(!currentWord())return;usedHint=true;$('readOk').disabled=true;$('picture').hidden=!$('picture').hidden;$('pictureBtn').textContent=$('picture').hidden?'Voir l’image':'Cacher l’image'};
+$('helpBtn').onclick=()=>{if(!currentWord())return;usedHint=true;$('readOk').disabled=true;$('reward').textContent='Regarde les sons et assemble-les doucement.'};
+$('readOk').onclick=()=>{const w=currentWord();if(!w||usedHint)return;const p=wp(w.word);p.self++;p.mastered=p.self>=3;$('readOk').disabled=true;$('readOk').classList.add('done');$('readOk').textContent='✓ Validé';state.wordQueue=state.wordQueue.filter(x=>x!==w.word||!p.mastered);save()};
+$('nextBtn').onclick=()=>{wi++;showWord()};
+$('soundPictureBtn').onclick=()=>{$('soundPicture').hidden=!$('soundPicture').hidden;$('soundPictureBtn').textContent=$('soundPicture').hidden?'Voir l’image':'Cacher l’image'};
+$('soundKnown').onclick=()=>{const s=currentSound();if(!s)return;const p=sp(s.g);p.self++;p.mastered=p.self>=3;$('soundKnown').disabled=true;$('soundKnown').classList.add('done');$('soundKnown').textContent='✓ Validé';if(p.mastered)state.soundQueue=state.soundQueue.filter(g=>g!==s.g);save()};
+$('soundNext').onclick=()=>{si++;showSound()};
+$('parentBtn').onclick=()=>{$('childView').hidden=true;$('parentView').hidden=false;renderParent()};$('backBtn').onclick=()=>{$('parentView').hidden=true;$('childView').hidden=false;showSection(section)};
+function renderParent(){$('soundStats').innerHTML=sounds.map(s=>`<div class="row"><span>${s.g} · ${s.word}</span><span>${sp(s.g).mastered?'Acquis':sp(s.g).self+'/3'}</span></div>`).join('');$('wordStats').innerHTML=words.map(w=>`<div class="row"><span>${w.word.toUpperCase()}</span><span>${wp(w.word).mastered?'Acquis':wp(w.word).self+'/3'}</span></div>`).join('')}
+$('resetBtn').onclick=()=>{if(confirm('Réinitialiser toute la progression ?')){localStorage.removeItem(KEY);location.reload()}};
+showSection('words');
