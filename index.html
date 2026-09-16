@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#fffdf8" />
+  <title>Phonika FR</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header>
+      <button class="brand" id="homeBtn" aria-label="Accueil">phonika <span>fr</span></button>
+      <button class="parent-link" id="parentBtn">Parent</button>
+    </header>
+
+    <section id="home" class="screen active">
+      <h1>J’apprends à lire</h1>
+      <div class="home-grid">
+        <button class="big-card" data-go="sounds"><span class="icon">Aa</span><strong>Les sons</strong><small>J’écoute et je découvre</small></button>
+        <button class="big-card" data-go="reading"><span class="icon">📖</span><strong>Je lis</strong><small>Niveau 1</small></button>
+      </div>
+    </section>
+
+    <section id="sounds" class="screen">
+      <div class="section-head"><button class="back" data-go="home">‹</button><div><h2>Les sons</h2><p>Écoute, regarde, découvre.</p></div></div>
+      <div id="soundCards" class="sound-grid"></div>
+      <p class="tip">Touche la lettre pour entendre le son. Touche l’image pour entendre le mot.</p>
+    </section>
+
+    <section id="reading" class="screen">
+      <div class="section-head"><button class="back" data-go="home">‹</button><div><h2>Je lis</h2><p>Niveau 1 · Toutes les lettres se prononcent</p></div></div>
+      <div class="reader">
+        <div class="progress"><span id="progressBar"></span></div>
+        <div id="word" class="word" aria-live="polite"></div>
+        <button id="helpBtn" class="help">Aide-moi à lire</button>
+        <div id="helpLine" class="help-line"></div>
+        <button id="pictureBtn" class="picture" aria-label="Voir et écouter le mot"><span id="pictureEmoji">?</span><small>touche l’image</small></button>
+        <div class="answer-row">
+          <button id="againBtn" class="answer secondary">À revoir</button>
+          <button id="knownBtn" class="answer primary">Je l’ai lu !</button>
+        </div>
+        <button id="nextBtn" class="next">Mot suivant →</button>
+      </div>
+    </section>
+
+    <section id="parent" class="screen">
+      <div class="section-head"><button class="back" data-go="home">‹</button><div><h2>Espace parent</h2><p>Progression enregistrée sur cet appareil.</p></div></div>
+      <div id="parentStats" class="stats"></div>
+      <button id="resetBtn" class="reset">Réinitialiser la progression</button>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
