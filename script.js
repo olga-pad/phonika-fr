@@ -1,42 +1,58 @@
 const sounds=[
- {g:'A',word:'avion',emoji:'✈️',type:'vowel'}, {g:'M',word:'maman',emoji:'👩',type:'consonant'}, {g:'I',word:'image',emoji:'🖼️',type:'vowel'}, {g:'P',word:'papa',emoji:'👨',type:'consonant'}, {g:'O',word:'olive',emoji:'🫒',type:'vowel'},
- {g:'L',word:'lune',emoji:'🌙',type:'consonant'}, {g:'V',word:'vélo',emoji:'🚲',type:'consonant'}, {g:'É',word:'épi',emoji:'🌾',type:'vowel'}, {g:'F',word:'fusée',emoji:'🚀',type:'consonant'}, {g:'R',word:'rat',emoji:'🐀',type:'consonant'}
+ {g:'A',word:'avion',emoji:'✈️',type:'vowel',level:1},{g:'I',word:'image',emoji:'🖼️',type:'vowel',level:1},{g:'O',word:'olive',emoji:'🫒',type:'vowel',level:1},{g:'M',word:'maman',emoji:'👩',type:'consonant',level:1},{g:'L',word:'lune',emoji:'🌙',type:'consonant',level:1},{g:'P',word:'papa',emoji:'👨',type:'consonant',level:1},
+ {g:'R',word:'rat',emoji:'🐀',type:'consonant',level:2},{g:'T',word:'tomate',emoji:'🍅',type:'consonant',level:2},{g:'V',word:'vélo',emoji:'🚲',type:'consonant',level:2},{g:'F',word:'fusée',emoji:'🚀',type:'consonant',level:2},{g:'N',word:'nez',emoji:'👃',type:'consonant',level:2},
+ {g:'D',word:'domino',emoji:'🎲',type:'consonant',level:3},{g:'B',word:'bébé',emoji:'👶',type:'consonant',level:3},{g:'U',word:'usine',emoji:'🏭',type:'vowel',level:3},{g:'É',word:'épi',emoji:'🌾',type:'vowel',level:3},
+ {g:'S',word:'sac',emoji:'🎒',type:'consonant',level:4,note:'S → /s/'},
+ {g:'CH',word:'chat',emoji:'🐱',type:'grapheme',level:5},
+ {g:'OU',word:'ours',emoji:'🐻',type:'grapheme',level:6},
+ {g:'J',word:'jupe',emoji:'👗',type:'consonant',level:7},
+ {g:'CA · CO · CU',word:'café',emoji:'☕',type:'rule',level:8,note:'C → /k/'},
+ {g:'CE · CI · CY',word:'citron',emoji:'🍋',type:'rule',level:9,note:'C → /s/'},
+ {g:'GA · GO · GU',word:'gâteau',emoji:'🎂',type:'rule',level:10,note:'G → /g/'},
+ {g:'GE · GI · GY',word:'girafe',emoji:'🦒',type:'rule',level:11,note:'G → /ʒ/'},
+ {g:'QU',word:'quatre',emoji:'4️⃣',type:'grapheme',level:12},
+ {g:'OI',word:'oiseau',emoji:'🐦',type:'grapheme',level:13},
+ {g:'ON',word:'ballon',emoji:'⚽',type:'grapheme',level:14},
+ {g:'AN · EN',word:'enfant',emoji:'🧒',type:'grapheme',level:15},
+ {g:'IN · AIN',word:'lapin',emoji:'🐰',type:'grapheme',level:16},
+ {g:'AU · EAU',word:'bateau',emoji:'🚤',type:'grapheme',level:17},
+ {g:'GN',word:'agneau',emoji:'🐑',type:'grapheme',level:18},
+ {g:'AI · EI',word:'lait',emoji:'🥛',type:'grapheme',level:19},
+ {g:'EU · ŒU',word:'feu',emoji:'🔥',type:'grapheme',level:20}
 ];
 const words=[
- {word:'ami',emoji:'🧒',need:['A','M','I']},
- {word:'papi',emoji:'👴',need:['P','A','I']},
- {word:'papa',emoji:'👨',need:['P','A']},
- {word:'mami',emoji:'👵',need:['M','A','I']},
- {word:'poli',emoji:'🙂',need:['P','O','L','I']},
- {word:'vélo',emoji:'🚲',need:['V','É','L','O']}
+ {word:'ami',emoji:'🧒',need:['A','M','I'],level:1},{word:'papa',emoji:'👨',need:['P','A'],level:1},{word:'mali',emoji:'🙂',need:['M','A','L','I'],level:1},
+ {word:'rat',emoji:'🐀',need:['R','A','T'],level:2},{word:'lit',emoji:'🛏️',need:['L','I','T'],level:2},{word:'mot',emoji:'💬',need:['M','O','T'],level:2},
+ {word:'vélo',emoji:'🚲',need:['V','É','L','O'],level:3},{word:'lune',emoji:'🌙',need:['L','U','N'],level:3},
+ {word:'sac',emoji:'🎒',need:['S','A'],level:4},{word:'chat',emoji:'🐱',need:['CH','A','T'],level:5},{word:'loup',emoji:'🐺',need:['L','OU','P'],level:6},
+ {word:'jupe',emoji:'👗',need:['J','U','P'],level:7},{word:'roi',emoji:'👑',need:['R','OI'],level:13},{word:'pont',emoji:'🌉',need:['P','ON','T'],level:14},
+ {word:'main',emoji:'✋',need:['M','AIN'],level:16},{word:'bateau',emoji:'🚤',need:['B','A','T','EAU'],level:17},{word:'lait',emoji:'🥛',need:['L','AI','T'],level:19},{word:'feu',emoji:'🔥',need:['F','EU'],level:20}
 ];
-const KEY='phonika-fr-v2';
+const KEY='phonika-fr-v3';
 let state=JSON.parse(localStorage.getItem(KEY)||'{"sounds":{},"words":{},"soundQueue":[],"wordQueue":[]}');
 const $=id=>document.getElementById(id);const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
-function speakFrench(text){if(!text||!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.78;const voices=window.speechSynthesis.getVoices();const fr=voices.find(v=>(v.lang||'').toLowerCase().startsWith('fr'));if(fr)u.voice=fr;window.speechSynthesis.speak(u)}
+function speakFrench(text){if(!text||!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.78;const fr=speechSynthesis.getVoices().find(v=>(v.lang||'').toLowerCase().startsWith('fr'));if(fr)u.voice=fr;speechSynthesis.speak(u)}
 function sp(g){if(!state.sounds[g])state.sounds[g]={self:0,mastered:false};return state.sounds[g]}
 function wp(w){if(!state.words[w])state.words[w]={self:0,mastered:false};return state.words[w]}
-function soundQueue(){let q=state.soundQueue.filter(g=>sounds.some(s=>s.g===g)&&!sp(g).mastered);for(const s of sounds){if(q.length>=5)break;if(!sp(s.g).mastered&&!q.includes(s.g))q.push(s.g)}state.soundQueue=q.slice(0,5);save();return state.soundQueue}
-function availableWords(){return words.filter(w=>w.need.every(g=>sp(g).mastered))}
+function masteredLevel(){let level=1;for(let l=1;l<=20;l++){const group=sounds.filter(s=>s.level===l);if(group.length&&group.every(s=>sp(s.g).mastered))level=l+1;else break}return Math.min(level,20)}
+function eligibleSounds(){const max=masteredLevel();return sounds.filter(s=>s.level<=max&&!sp(s.g).mastered)}
+function soundQueue(){let eligible=eligibleSounds(),q=state.soundQueue.filter(g=>eligible.some(s=>s.g===g));for(const s of eligible){if(q.length>=5)break;if(!q.includes(s.g))q.push(s.g)}state.soundQueue=q.slice(0,5);save();return state.soundQueue}
+function hasNeed(n){if(sp(n).mastered)return true;return sounds.some(s=>s.g.split(' · ').includes(n)&&sp(s.g).mastered)}
+function availableWords(){return words.filter(w=>w.need.every(hasNeed))}
 function wordQueue(){let available=availableWords(),q=state.wordQueue.filter(w=>available.some(x=>x.word===w)&&!wp(w).mastered);for(const w of available){if(q.length>=5)break;if(!wp(w.word).mastered&&!q.includes(w.word))q.push(w.word)}state.wordQueue=q.slice(0,5);save();return state.wordQueue}
 let section='words',wi=0,si=0,usedHint=false;
-function colorText(text){return [...text].map(c=>`<span class="${'AEIOUYÉÈÊÀÂÔÎÏÙÛ'.includes(c.toUpperCase())?'vowel':'consonant'}">${c.toUpperCase()}</span>`).join('')}
+function colorText(text){return [...text].map(c=>`<span class="${'AEIOUYÉÈÊÀÂÔÎÏÙÛŒ'.includes(c.toUpperCase())?'vowel':'consonant'}">${c.toUpperCase()}</span>`).join('')}
 function showSection(which){section=which;$('readingView').hidden=which!=='words';$('soundsView').hidden=which!=='sounds';$('readingTab').classList.toggle('on',which==='words');$('soundsTab').classList.toggle('on',which==='sounds');which==='words'?showWord():showSound()}
 function currentWord(){const q=wordQueue();return words.find(w=>w.word===q[wi%Math.max(q.length,1)])}
-function showWord(){const w=currentWord();usedHint=false;$('reward').textContent='';$('picture').hidden=true;$('pictureBtn').textContent='Voir l’image';$('readOk').disabled=false;$('readOk').classList.remove('done');$('readOk').textContent='✓ Je l’ai lu seul';if(!w){$('word').textContent='';$('readOk').hidden=true;$('helpBtn').hidden=true;$('pictureBtn').hidden=true;$('nextBtn').hidden=true;$('reward').textContent='Découvrons encore quelques sons';return}$('readOk').hidden=$('helpBtn').hidden=$('pictureBtn').hidden=$('nextBtn').hidden=false;$('word').innerHTML=colorText(w.word);$('picture').textContent=w.emoji}
+function showWord(){const w=currentWord();usedHint=false;$('reward').textContent='';$('picture').hidden=true;$('pictureBtn').textContent='Voir l’image';$('readOk').disabled=false;$('readOk').classList.remove('done');$('readOk').textContent='✓ Je l’ai lu seul';if(!w){$('word').textContent='';$('readOk').hidden=$('helpBtn').hidden=$('pictureBtn').hidden=$('nextBtn').hidden=true;$('reward').textContent='Découvrons encore quelques sons';return}$('readOk').hidden=$('helpBtn').hidden=$('pictureBtn').hidden=$('nextBtn').hidden=false;$('word').innerHTML=colorText(w.word);$('picture').textContent=w.emoji}
 function currentSound(){const q=soundQueue();return sounds.find(s=>s.g===q[si%Math.max(q.length,1)])}
-function showSound(){const s=currentSound();if(!s){$('soundCard').textContent='Bravo !';return}$('soundCard').innerHTML=`<span class="${s.type}">${s.g}</span>`;$('soundPicture').textContent=s.emoji;$('soundPicture').hidden=true;$('soundPictureBtn').textContent="Voir l’image";$('soundKnown').disabled=false;$('soundKnown').classList.remove('done');$('soundKnown').textContent='✓ Je connais ce son'}
+function showSound(){const s=currentSound();if(!s){$('soundCard').textContent='Bravo !';return}$('soundCard').innerHTML=`<span class="${s.type==='vowel'?'vowel':'consonant'}">${s.g}</span>`;$('soundPicture').textContent=s.emoji;$('soundPicture').hidden=true;$('soundPictureBtn').textContent='Voir l’image';$('soundKnown').disabled=false;$('soundKnown').classList.remove('done');$('soundKnown').textContent=s.type==='rule'?'✓ Je connais cette règle':'✓ Je connais ce son'}
 $('readingTab').onclick=()=>showSection('words');$('soundsTab').onclick=()=>showSection('sounds');
-$('pictureBtn').onclick=()=>{if(!currentWord())return;usedHint=true;$('readOk').disabled=true;$('picture').hidden=!$('picture').hidden;$('pictureBtn').textContent=$('picture').hidden?'Voir l’image':'Cacher l’image'};
-$('picture').onclick=()=>{const w=currentWord();if(w)speakFrench(w.word)};
+$('pictureBtn').onclick=()=>{if(!currentWord())return;usedHint=true;$('readOk').disabled=true;$('picture').hidden=!$('picture').hidden;$('pictureBtn').textContent=$('picture').hidden?'Voir l’image':'Cacher l’image'};$('picture').onclick=()=>{const w=currentWord();if(w)speakFrench(w.word)};
 $('helpBtn').onclick=()=>{if(!currentWord())return;usedHint=true;$('readOk').disabled=true;$('reward').textContent='Regarde les sons et assemble-les doucement.'};
-$('readOk').onclick=()=>{const w=currentWord();if(!w||usedHint)return;const p=wp(w.word);p.self++;p.mastered=p.self>=3;$('readOk').disabled=true;$('readOk').classList.add('done');$('readOk').textContent='✓ Validé';state.wordQueue=state.wordQueue.filter(x=>x!==w.word||!p.mastered);save()};
-$('nextBtn').onclick=()=>{wi++;showWord()};
-$('soundPictureBtn').onclick=()=>{$('soundPicture').hidden=!$('soundPicture').hidden;$('soundPictureBtn').textContent=$('soundPicture').hidden?'Voir l’image':'Cacher l’image'};
-$('soundPicture').onclick=()=>{const s=currentSound();if(s)speakFrench(s.word)};
-$('soundKnown').onclick=()=>{const s=currentSound();if(!s)return;const p=sp(s.g);p.self++;p.mastered=p.self>=3;$('soundKnown').disabled=true;$('soundKnown').classList.add('done');$('soundKnown').textContent='✓ Validé';if(p.mastered)state.soundQueue=state.soundQueue.filter(g=>g!==s.g);save()};
-$('soundNext').onclick=()=>{si++;showSound()};
+$('readOk').onclick=()=>{const w=currentWord();if(!w||usedHint)return;const p=wp(w.word);p.self++;p.mastered=p.self>=3;$('readOk').disabled=true;$('readOk').classList.add('done');$('readOk').textContent='✓ Validé';if(p.mastered)state.wordQueue=state.wordQueue.filter(x=>x!==w.word);save()};$('nextBtn').onclick=()=>{wi++;showWord()};
+$('soundPictureBtn').onclick=()=>{$('soundPicture').hidden=!$('soundPicture').hidden;$('soundPictureBtn').textContent=$('soundPicture').hidden?'Voir l’image':'Cacher l’image'};$('soundPicture').onclick=()=>{const s=currentSound();if(s)speakFrench(s.word)};
+$('soundKnown').onclick=()=>{const s=currentSound();if(!s)return;const p=sp(s.g);p.self++;p.mastered=p.self>=3;$('soundKnown').disabled=true;$('soundKnown').classList.add('done');$('soundKnown').textContent='✓ Validé';if(p.mastered)state.soundQueue=state.soundQueue.filter(g=>g!==s.g);save()};$('soundNext').onclick=()=>{si++;showSound()};
 $('parentBtn').onclick=()=>{$('childView').hidden=true;$('parentView').hidden=false;renderParent()};$('backBtn').onclick=()=>{$('parentView').hidden=true;$('childView').hidden=false;showSection(section)};
-function renderParent(){$('soundStats').innerHTML=sounds.map(s=>`<div class="row"><span>${s.g} · ${s.word}</span><span>${sp(s.g).mastered?'Acquis':sp(s.g).self+'/3'}</span></div>`).join('');$('wordStats').innerHTML=words.map(w=>`<div class="row"><span>${w.word.toUpperCase()}</span><span>${wp(w.word).mastered?'Acquis':wp(w.word).self+'/3'}</span></div>`).join('')}
-$('resetBtn').onclick=()=>{if(confirm('Réinitialiser toute la progression ?')){localStorage.removeItem(KEY);location.reload()}};
-showSection('words');
+function renderParent(){const current=masteredLevel();$('soundStats').innerHTML=sounds.map(s=>`<div class="row"><span>Niveau ${s.level} · ${s.g} · ${s.word}</span><span>${sp(s.g).mastered?'Acquis':sp(s.g).self+'/3'}</span></div>`).join('');$('wordStats').innerHTML=`<div class="row"><strong>Niveau actuel</strong><strong>${current}/20</strong></div>`+words.map(w=>`<div class="row"><span>Niveau ${w.level} · ${w.word.toUpperCase()}</span><span>${wp(w.word).mastered?'Acquis':wp(w.word).self+'/3'}</span></div>`).join('')}
+$('resetBtn').onclick=()=>{if(confirm('Réinitialiser toute la progression ?')){localStorage.removeItem(KEY);location.reload()}};showSection('words');
