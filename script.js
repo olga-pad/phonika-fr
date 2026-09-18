@@ -11,8 +11,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  const wordMastery=document.getElementById('readOk');
  const wordPrev=document.getElementById('wordPrev'),wordNext=document.getElementById('wordNext');
  const soundPrev=document.getElementById('soundPrev'),soundNavNext=document.getElementById('soundNavNext');
- const oldWordNext=document.getElementById('nextBtn'),oldSoundNext=document.getElementById('soundNext');
- wordNext.onclick=()=>oldWordNext?.click();soundNavNext.onclick=()=>oldSoundNext?.click();
+ wordNext.onclick=()=>{wi++;showWord();};soundNavNext.onclick=()=>{si++;showSound();};
  wordPrev.onclick=()=>{};soundPrev.onclick=()=>{};
  const home=document.getElementById('homeButton');if(home)home.onclick=()=>{document.getElementById('readingTab')?.click();};
 
