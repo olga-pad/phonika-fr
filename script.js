@@ -40,8 +40,10 @@ window.addEventListener('DOMContentLoaded',()=>{
  soundPicBtn.onclick=()=>{const s=currentSound();if(!s)return;const willShow=soundPic.hidden;soundPic.hidden=!willShow;soundPicBtn.textContent=willShow?'Cacher l’image':'Voir l’image';if(willShow){soundMastery.disabled=true}};
  soundPic.onclick=null;
  soundHelp.onclick=()=>{const s=currentSound();if(!s)return;soundMastery.disabled=true;speakFrench(s.word);};
+ soundMastery.onclick=()=>{if(soundMastery.disabled)return;markSound();};
  word.onclick=null;
  wordPicBtn.onclick=()=>{const w=currentWord();if(!w)return;usedHint=true;wordMastery.disabled=true;const willShow=wordPic.hidden;wordPic.hidden=!willShow;wordPicBtn.textContent=willShow?'Cacher l’image':'Voir l’image';};
  wordPic.onclick=null;
+ wordMastery.onclick=()=>{if(wordMastery.disabled)return;markWord();};
 });
 window.addEventListener('DOMContentLoaded',()=>{const h=document.getElementById('helpBtn');if(h)h.onclick=()=>{const w=currentWord();if(!w)return;usedHint=true;document.getElementById('readOk').disabled=true;speakFrench(w.word);};});
