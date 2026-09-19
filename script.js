@@ -1,10 +1,11 @@
 'use strict';
-document.write('<script src="./script-core.js?v=15"><\/script>');
+document.write('<script src="./script-core.js?v=16"><\/script>');
 window.addEventListener('DOMContentLoaded',()=>{
  const card=document.getElementById('soundCard');
  const soundPicBtn=document.getElementById('soundPictureBtn');
  const soundPic=document.getElementById('soundPicture');
  const soundMastery=document.getElementById('soundKnown');
+ const soundHelp=document.getElementById('soundHelpBtn');
  const word=document.getElementById('word');
  const wordPicBtn=document.getElementById('pictureBtn');
  const wordPic=document.getElementById('picture');
@@ -38,6 +39,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  card.onclick=null;
  soundPicBtn.onclick=()=>{const s=currentSound();if(!s)return;const willShow=soundPic.hidden;soundPic.hidden=!willShow;soundPicBtn.textContent=willShow?'Cacher l’image':'Voir l’image';if(willShow){soundMastery.disabled=true}};
  soundPic.onclick=null;
+ soundHelp.onclick=()=>{const s=currentSound();if(!s)return;soundMastery.disabled=true;speakFrench(s.word);};
  word.onclick=null;
  wordPicBtn.onclick=()=>{const w=currentWord();if(!w)return;usedHint=true;wordMastery.disabled=true;const willShow=wordPic.hidden;wordPic.hidden=!willShow;wordPicBtn.textContent=willShow?'Cacher l’image':'Voir l’image';};
  wordPic.onclick=null;
