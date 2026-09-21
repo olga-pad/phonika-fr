@@ -1,5 +1,5 @@
 'use strict';
-document.write('<script src="./script-core.js?v=18"><\/script>');
+document.write('<script src="./script-core.js?v=19"><\/script>');
 window.addEventListener('DOMContentLoaded',()=>{
  const card=document.getElementById('soundCard');
  const soundPicBtn=document.getElementById('soundPictureBtn');
@@ -45,3 +45,16 @@ window.addEventListener('DOMContentLoaded',()=>{
  wordPic.onclick=null;
 });
 window.addEventListener('DOMContentLoaded',()=>{const h=document.getElementById('helpBtn');if(h)h.onclick=()=>{const w=currentWord();if(!w)return;usedHint=true;document.getElementById('readOk').disabled=true;speakFrench(w.word);};});
+
+window.addEventListener('DOMContentLoaded',()=>{
+ const views=[document.getElementById('readingView'),document.getElementById('soundsView')].filter(Boolean);
+ if(!views.length)return;
+ const track=document.createElement('div');track.className='lesson-progress';track.innerHTML='<div class="progress-line"></div><div class="progress-dots"></div><div class="progress-dino">🦕</div><div class="progress-flag">🏁</div>';
+ let progress=0,goal=10;const dots=track.querySelector('.progress-dots'),dino=track.querySelector('.progress-dino');
+ const draw=()=>{dots.replaceChildren(...Array.from({length:goal},(_,i)=>{const s=document.createElement('span');s.className='progress-dot'+(i<progress?' done':'');s.textContent=i<progress?'✓':'';return s;}));const pct=Math.min(100,progress/goal*100);dino.style.left='calc(7% + '+(pct*.86)+'%)';};
+ const move=(view)=>{view?.insertBefore(track,view.querySelector('.stage'));progress=0;draw();};
+ move(document.getElementById('readingView'));
+ document.getElementById('readingTab')?.addEventListener('click',()=>move(document.getElementById('readingView')));
+ document.getElementById('soundsTab')?.addEventListener('click',()=>move(document.getElementById('soundsView')));
+ ['readOk','soundKnown'].forEach(id=>document.getElementById(id)?.addEventListener('click',()=>{progress=Math.min(goal,progress+1);draw();}));
+});
